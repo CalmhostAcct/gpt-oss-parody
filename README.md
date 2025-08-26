@@ -98,41 +98,41 @@ clients/ – terminal chat, Responses API server, and a Codex integration (becau
 Installation (or how to lose a weekend)
 
 # Just the tools
-pip install gpt-oss
+``pip install gpt-oss``
 
 # Torch implementation (requires a GPU farm)
-pip install "gpt-oss[torch]"
+``pip install "gpt-oss[torch]"``
 
 # Triton implementation (requires you to compile Triton from source)
-pip install "gpt-oss[triton]"
+``pip install "gpt-oss[triton]"``
 Note: The metal build needs GPTOSS_BUILD_METAL=1. If you’re on Linux, ignore this and feel superior.
 
 ## Download the Weights (the real work)
 
 # 120 B
-hf download openai/gpt-oss-120b --include "original/*" --local-dir gpt-oss-120b/
+``hf download openai/gpt-oss-120b --include "original/*" --local-dir gpt-oss-120b/``
 
 # 20 B
-hf download openai/gpt-oss-20b --include "original/*" --local-dir gpt-oss-20b/
+``hf download openai/gpt-oss-20b --include "original/*" --local-dir gpt-oss-20b/``
 Warning: The download size is roughly “a small planet”. Make sure you have enough bandwidth and a spare hard drive.
 
 ## Running the Reference PyTorch Model (if you love pain)
 
-torchrun --nproc-per-node=4 -m gpt_oss.generate gpt-oss-120b/original/
+``torchrun --nproc-per-node=4 -m gpt_oss.generate gpt-oss-120b/original/``
 If you see “CUDA out of memory”, congratulations—you’ve just discovered the GPU‑memory limit of your cluster.
 
 ## Running the Triton‑Optimized Version (single‑GPU, single‑night)
 
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-python -m gpt_oss.generate --backend triton gpt-oss-120b/original/
+```export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+python -m gpt_oss.generate --backend triton gpt-oss-120b/original/```
 Still OOM? Turn on the expandable allocator and add more coffee.
 
 ## Metal (Apple‑Silicon) – “Because we can”
 
-GPTOSS_BUILD_METAL=1 pip install -e ".[metal]"
+```GPTOSS_BUILD_METAL=1 pip install -e ".[metal]"
 python gpt_oss/metal/scripts/create-local-model.py -s <model_dir> -d model.bin
-python gpt_oss/metal/examples/generate.py model.bin -p "Why is the sky blue?"
-Harmony Format & Tools (the “secret sauce”)
+python gpt_oss/metal/examples/generate.py model.bin -p "Why is the sky blue?"```
+# Harmony Format & Tools (the “secret sauce”)
 The Harmony library is the only thing that makes the model actually understand you. Think of it as a very polite but extremely verbose translator.
 
 ```python
