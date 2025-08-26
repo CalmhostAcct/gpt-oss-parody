@@ -1,6 +1,5 @@
-# 🎉 **gpt-oss-120b** & **gpt-oss-20b** – The *“Just… 120 Billion Parameters”* Model Suite
 
-![gpt-oss logo](./docs/gpt-oss.svg)
+![gpt-oss logo](https://github.com/openai/gpt-oss/blob/main/docs/gpt-oss.svg)
 
 <p align="center">
   <a href="https://gpt-oss.com"><strong>Try gpt-oss (if you’re feeling brave)</strong></a> ·
@@ -89,11 +88,11 @@ lms get openai/gpt-oss-20b   # click a button, pray for RAM
 
 # Repo Layout (in case you’re nosy)
 
-torch/ – a slow reference implementation (needs a mini‑cluster of H100s).  
-triton/ – a slightly less slow reference that actually uses the new‑fangled Triton kernels.  
-metal/ – for Apple‑silicon brag‑gers who want to run this on a MacBook (but still need 80 GB of RAM, so… good luck).  
-tools/ – toy browsing and Python containers (think “ChatGPT’s sandbox, but you host it”).  
-clients/ – terminal chat, Responses API server, and a Codex integration (because why not?).
+- torch/ – a slow reference implementation (needs a mini‑cluster of H100s).  
+- triton/ – a slightly less slow reference that actually uses the new‑fangled Triton kernels.  
+- metal/ – for Apple‑silicon brag‑gers who want to run this on a MacBook (but still need 80 GB of RAM, so… good luck).  
+- tools/ – toy browsing and Python containers (think “ChatGPT’s sandbox, but you host it”).  
+- clients/ – terminal chat, Responses API server, and a Codex integration (because why not?).
 
 Installation (or how to lose a weekend)
 
@@ -114,24 +113,30 @@ Note: The metal build needs GPTOSS_BUILD_METAL=1. If you’re on Linux, ignore t
 
 # 20 B
 ``hf download openai/gpt-oss-20b --include "original/*" --local-dir gpt-oss-20b/``
+
 Warning: The download size is roughly “a small planet”. Make sure you have enough bandwidth and a spare hard drive.
 
 ## Running the Reference PyTorch Model (if you love pain)
 
 ``torchrun --nproc-per-node=4 -m gpt_oss.generate gpt-oss-120b/original/``
+
 If you see “CUDA out of memory”, congratulations—you’ve just discovered the GPU‑memory limit of your cluster.
 
 ## Running the Triton‑Optimized Version (single‑GPU, single‑night)
 
-```export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-python -m gpt_oss.generate --backend triton gpt-oss-120b/original/```
+```
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+python -m gpt_oss.generate --backend triton gpt-oss-120b/original/
+```
 Still OOM? Turn on the expandable allocator and add more coffee.
 
 ## Metal (Apple‑Silicon) – “Because we can”
 
-```GPTOSS_BUILD_METAL=1 pip install -e ".[metal]"
+```
+GPTOSS_BUILD_METAL=1 pip install -e ".[metal]"
 python gpt_oss/metal/scripts/create-local-model.py -s <model_dir> -d model.bin
-python gpt_oss/metal/examples/generate.py model.bin -p "Why is the sky blue?"```
+python gpt_oss/metal/examples/generate.py model.bin -p "Why is the sky blue?"
+```
 # Harmony Format & Tools (the “secret sauce”)
 The Harmony library is the only thing that makes the model actually understand you. Think of it as a very polite but extremely verbose translator.
 
@@ -142,7 +147,7 @@ enc = load_harmony_encoding(HarmonyEncodingName.HARMONY_GPT_OSS)
 ```
 Tool examples (browser & Python) are in gpt_oss/tools/. They’re stateless (good for demos, terrible for production).
 
-Satirical Disclaimer
+## Satirical Disclaimer
 We are not responsible if the model decides to write a manifesto about the meaning of life.
 Do not use this in any mission‑critical system unless you enjoy catastrophic failure.
 Remember: The model’s reasoning effort is just a fancy knob that changes how long you wait for it to hallucinate.
